@@ -148,11 +148,21 @@
     // })
 });
 
+// //设定相机的观测位置
+viewer.camera.setView({
+    destination : Cesium.Cartesian3.fromDegrees(113.66, 34.75, 1000000)  // 设置相机的位置
+    // orientation: {
+    //     heading : Cesium.Math.toRadians(heading), 
+    //     pitch : Cesium.Math.toRadians(pitch),   
+    //     roll : 0.0                            
+    // } 
+});
 function remove_entities(){
     viewer.entities.removeAll();
 
 }
-// 声明变量作为实体
+
+// 声明实体变量
 var food_point
 // 添加实体
 function foodStuff(lng,lat){
@@ -240,8 +250,6 @@ var yield_year=["yield2005","yield2006","yield2007","yield2008","yield2009","yie
 // 展示各年的产量
 function alert_show_yield(years){
     show_foodstuff(years);
-    // 未完待续，后续加上摄影高度
-    // viewer.zoomTo(food_point);
 }
 // 读取产量xlsx格式
  var persons = []; // 存储获取到的excel数据
@@ -278,6 +286,8 @@ $('#excel-file').change(function(e) {
             fileReader.readAsBinaryString(files[0]);
         });
 
+
+// 获取表中经纬度
 function get_lng(){
     var food_lng=[]
 for(let i=0;i<persons.length;i++ ){
@@ -292,22 +302,6 @@ for(let i=0;i<persons.length;i++ ){
     }
 return food_lat
 }
-
-// // 获取天气数据
-// // var weather_data=[]
-// var weather_data=get_weather_data();
-
-// console.log("天气数据",weather_data);
-// async function get_weather_data(){
-//     let mapDataP = d3.csv("0.csv", d3.autoType);
-//     let mapData = await mapDataP;
-//     var w_data=[];
-//     w_data=mapData.columns;
-// console.log(mapData);
-// console.log(w_data);
-// return w_data;
-// }
-
 // 获取特定城市的2005-2014年产量
 function zone_yield(zone_id){
     let yield=[persons[zone_id].yield2005,persons[zone_id].yield2006,persons[zone_id].yield2007,persons[zone_id].yield2008,
@@ -318,7 +312,7 @@ function zone_yield(zone_id){
 console.log("特定地区产量",yield)
 return yield;
 }
-//     // 获取2005-2014年产量
+//      获取2005-2014年产量
 function get_yield(years){
         var yield=[]
         for(let i=0;i<persons.length;i++){
@@ -343,9 +337,6 @@ function get_county(){
         }
     return county_name
 }
-
-
-
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function (movement) {
         //pick.id即为entity
@@ -370,13 +361,15 @@ handler.setInputAction(function (movement) {
         // console.log(pick);
         // console.log(county_ID);
         console.log("获取的地区名",name);
+
+        // 获取子窗口全内容元素
         var weather_iframe=document.getElementById("weather").contentWindow;
         var yield_iframe=document.getElementById("yield").contentWindow;
         yield_iframe.postMessage({ msg: get_zone_yield,name },
-    'http://127.0.0.1:5050/山河四省产量/test.html');
+    'http://127.0.0.1:5501/test.html');
     console.log(yield_iframe);
         weather_iframe.postMessage({ msg: county_ID },
-    'http://127.0.0.1:5050/山河四省产量/cs.html');
+    'http://127.0.0.1:5501/cs.html');
         console.log(weather_iframe);
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
